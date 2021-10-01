@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
 let Login = () => {
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");
+
+  useEffect(() => {
+    console.log(email, password);
+  });
 
   return (
     <div className="row">
