@@ -3,11 +3,20 @@ import React, { useState, useEffect } from "react";
 let Login = () => {
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");
-
+  //executes on each render(initial render and state upadates)
   useEffect(() => {
-    console.log(email, password);
+    //console.log(email, password);
   });
 
+  //executes only on state updates of "email" only (and also with initial render)
+  useEffect(() => {
+    //validation on email only
+    if (email.indexOf("@") > 0) {
+      console.log("valid");
+    } else {
+      console.log("Invalid");
+    }
+  }, [email, password]);
   return (
     <div className="row">
       <div className="col-lg-5 col-md-7 mx-auto">
