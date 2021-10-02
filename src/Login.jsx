@@ -12,11 +12,24 @@ let Login = () => {
   useEffect(() => {
     //validation on email only
     if (email.indexOf("@") > 0) {
-      console.log("valid");
+      // console.log("valid");
     } else {
-      console.log("Invalid");
+      // console.log("Invalid");
     }
-  }, [email, password]);
+  }, [email]);
+
+  //executes only once -on initial render = componentDidMount
+  useEffect(() => {
+    document.title = "Login - eCommerce";
+  }, []);
+
+  //exectures only once -on component unmounting phase = componentWillUnmount
+  useEffect(() => {
+    return () => {
+      console.log("Component Unmount");
+    };
+  });
+
   return (
     <div className="row">
       <div className="col-lg-5 col-md-7 mx-auto">
