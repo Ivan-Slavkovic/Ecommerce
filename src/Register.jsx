@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-let Register = () => {
+let Register = (props) => {
   let [state, setState] = useState({
     email: "",
     password: "",
@@ -156,6 +156,7 @@ let Register = () => {
         setMessage(
           <span className="text-success">Successfully Registered</span>
         );
+        props.history.replace("/dashbarod");
       } else {
         setMessage(
           <span className="text-danger">Errors in database connection</span>

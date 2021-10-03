@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from "react";
 
-let Login = () => {
+let Login = (props) => {
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");
+
+  let [dirty, setDirty] = useState({
+    email: false,
+    password: false,
+  });
+
+  let [errors, setErrors] = useState({
+    email: [],
+    password: [],
+  });
+
+  let [loginMessage, setLoginMessage] = useState("");
+
   //executes on each render(initial render and state upadates)
   useEffect(() => {
     //console.log(email, password);
@@ -29,7 +42,90 @@ let Login = () => {
       console.log("Component Unmount");
     };
   });
+  //a fucntion to validate email and password
+  let validate = () => {
+    //variable to store errors
+    let errorsData = {};
 
+    //email
+    errorsData.email = [];
+
+    //email cannot be blank
+    if (!email) {
+      errorsData.email.push("Email can't be blank");
+    }
+
+    //email regex
+    const validEmailRegex = /\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/;
+    if (email) {
+      if (!validEmailRegex.test(email)) {
+        errorsData.email.push("Proper email address requires");
+      }
+    }
+
+    //password
+    errorsData.password = [];
+
+    //password cannot be blank
+    if (!password) {
+      errorsData.password.push("Password can't be blank");
+    }
+
+    //password regex
+    const validPasswordRegex = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,15})/;
+    if (password) {
+      if (!validPasswordRegex.test(password)) {
+        errorsData.password.push(
+          "Password should be 6 to 15 characters long with at least one uppercase letter, one lowercase letter and one digit"
+        );
+      }
+    }
+    setErrors(errorsData);
+  };
+
+  useEffect(validate, [email, password]);
+
+  //When the user clicks on Login button
+  let onLoginClick = async () => {
+    let dirtyData = dirty;
+    Object.keys(dirty).forEach((control) => {
+      dirtyData[control] = true;
+    });
+    setDirty(dirtyData);
+
+    validate();
+    if (isValid()) {
+      let response = await fetch(
+        `http://localhost:5000/users?email=${email}&password=${password}`,
+        { method: "GET" }
+      );
+      if (response.ok) {
+        let responseBody = await response.json();
+        if (responseBody.length > 0) {
+          props.history.replace("/dashbarod");
+        } else {
+          setLoginMessage(
+            <span className="text-danger">Invalid Login, please try again</span>
+          );
+        }
+      } else {
+        setLoginMessage(
+          <span className="text-danger">
+            Unable to connect to database server
+          </span>
+        );
+      }
+    }
+  };
+  let isValid = () => {
+    let valid = true;
+
+    //reading all controls from errors
+    for (let control in errors) {
+      if (errors[control].length > 0) valid = false;
+    }
+    return valid;
+  };
   return (
     <div className="row">
       <div className="col-lg-5 col-md-7 mx-auto">
@@ -55,7 +151,14 @@ let Login = () => {
                 onChange={(event) => {
                   setEmail(event.target.value);
                 }}
+                onBlur={() => {
+                  setDirty({ ...dirty, email: true });
+                  validate();
+                }}
               ></input>
+              <div className="text-danger">
+                {dirty["email"] && errors["email"][0] ? errors["email"] : ""}
+              </div>
             </div>
             {/* email ends*/}
 
@@ -71,9 +174,24 @@ let Login = () => {
                 onChange={(event) => {
                   setPassword(event.target.value);
                 }}
+                onBlur={() => {
+                  setDirty({ ...dirty, password: true });
+                  validate();
+                }}
               ></input>
             </div>
+            <div className="text-danger">
+              {dirty["password"] && errors["password"][0]
+                ? errors["password"]
+                : ""}
+            </div>
             {/* password ends*/}
+          </div>
+          <div className="card-footer text-center">
+            <div className="m-1">{loginMessage}</div>
+            <button className="btn btn-success m-2" onClick={onLoginClick}>
+              Login
+            </button>
           </div>
         </div>
       </div>
