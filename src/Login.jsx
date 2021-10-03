@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "./UserContext";
 let Login = (props) => {
   var [email, setEmail] = useState("");
   var [password, setPassword] = useState("");
+  let userContext = useContext(UserContext);
 
   let [dirty, setDirty] = useState({
     email: false,
@@ -39,7 +40,7 @@ let Login = (props) => {
   //exectures only once -on component unmounting phase = componentWillUnmount
   useEffect(() => {
     return () => {
-      console.log("Component Unmount");
+      // console.log("Component Unmount");
     };
   });
   //a fucntion to validate email and password
@@ -101,8 +102,17 @@ let Login = (props) => {
       );
       if (response.ok) {
         let responseBody = await response.json();
+        //set global satate using context
         if (responseBody.length > 0) {
-          props.history.replace("/dashbarod");
+          userContext.setUser({
+            ...userContext.user,
+            isLoggedIn: true,
+            currentUserName: responseBody[0].fullName,
+            currentUserId: responseBody[0].id,
+          });
+
+          //redirect to dashboard
+          props.history.replace("/dashboard");
         } else {
           setLoginMessage(
             <span className="text-danger">Invalid Login, please try again</span>

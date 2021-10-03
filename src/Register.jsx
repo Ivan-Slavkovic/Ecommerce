@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { UserContext } from "./UserContext";
 
 let Register = (props) => {
   let [state, setState] = useState({
@@ -41,6 +42,8 @@ let Register = (props) => {
     country: false,
     receiveNewsLetters: false,
   });
+
+  let userContext = useContext(UserContext);
 
   let [message, setMessage] = useState("");
 
@@ -153,10 +156,18 @@ let Register = (props) => {
       });
 
       if (response.ok) {
+        let responseBody = await response.json();
+        userContext.setUser({
+          ...userContext.user,
+          isLoggedIn: true,
+          currentUserName: responseBody.fullName,
+          currentUserId: responseBody.id,
+        });
+
         setMessage(
           <span className="text-success">Successfully Registered</span>
         );
-        props.history.replace("/dashbarod");
+        props.history.replace("/dashboard");
       } else {
         setMessage(
           <span className="text-danger">Errors in database connection</span>
