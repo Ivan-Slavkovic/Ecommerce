@@ -1,38 +1,28 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useCallback } from "react";
 import { UserContext } from "./UserContext";
 import Order from "./Order";
 import { OrdersService, ProductsService } from "./Service";
-//get previous orders
-// let getPreviousOrderds = (orders) => {
-//   return orders.filter((ord) => ord.isPaymentCompleted === true);
-// };
-
-// //get Cart
-// let getCart = (orders) => {
-//   return orders.filter((ord) => ord.isPaymentCompleted === false);
-// };
 
 let Dashboard = (props) => {
   let [orders, setOrders] = useState([]);
   //get context
   let userContext = useContext(UserContext);
 
-  //executes only once - on initial render = componentDidMount
-  useEffect(() => {
-    document.title = "Dashboard - eCommerce";
-
+  //loadDataFromDatabase function that fetches data from 'orders' array from json file
+  let loadDataFromDatabase = useCallback(async () => {
     //load data from database
-    (async () => {
-      let ordersResponse = await fetch(
-        `http://localhost:5000/orders?userid=${userContext.user.currentUserId}`,
-        { method: "GET" }
-      );
+    let ordersResponse = await fetch(
+      `http://localhost:5000/orders?userid=${userContext.user.currentUserId}`,
+      { method: "GET" }
+    );
 
-      if (ordersResponse.ok) {
-        let ordersResponseBody = await ordersResponse.json();
+    if (ordersResponse.ok) {
+      //status code is 200
+      let ordersResponseBody = await ordersResponse.json();
 
-        //get all data from products
-        let productsResponse = await ProductsService.fetchProducts();
+      //get all data from products
+      let productsResponse = await ProductsService.fetchProducts();
+      if (productsResponse.ok) {
         let productsResponseBody = await productsResponse.json();
 
         //read all orders data
@@ -43,17 +33,31 @@ let Dashboard = (props) => {
           );
         });
 
-        // console.log(ordersResponseBody);
+        console.log(ordersResponseBody);
+
         setOrders(ordersResponseBody);
       }
-    })();
+    }
   }, [userContext.user.currentUserId]);
+
+  //executes only once - on initial render =  componentDidMount
+  useEffect(() => {
+    document.title = "Dashboard - eCommerce";
+
+    loadDataFromDatabase();
+  }, [userContext.user.currentUserId, loadDataFromDatabase]);
 
   return (
     <div className="row">
       <div className="col-12 py-3 header">
         <h4>
-          <i className="fa fa-dashboard"></i> Dashboard
+          <i className="fa fa-dashboard"></i> Dashboard{" "}
+          <button
+            className="btn btn-sm btn-info"
+            onClick={loadDataFromDatabase}
+          >
+            <i className="fa fa-refresh"></i>Refresh
+          </button>
         </h4>
       </div>
       <div className="col-12">
