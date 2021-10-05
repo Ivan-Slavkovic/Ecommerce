@@ -1,16 +1,16 @@
 import React, { useEffect, useContext, useState } from "react";
 import { UserContext } from "./UserContext";
 import Order from "./Order";
-
+import { OrdersService, ProductsService } from "./Service";
 //get previous orders
-let getPreviousOrderds = (orders) => {
-  return orders.filter((ord) => ord.isPaymentCompleted === true);
-};
+// let getPreviousOrderds = (orders) => {
+//   return orders.filter((ord) => ord.isPaymentCompleted === true);
+// };
 
-//get Cart
-let getCart = (orders) => {
-  return orders.filter((ord) => ord.isPaymentCompleted === false);
-};
+// //get Cart
+// let getCart = (orders) => {
+//   return orders.filter((ord) => ord.isPaymentCompleted === false);
+// };
 
 let Dashboard = (props) => {
   let [orders, setOrders] = useState([]);
@@ -32,22 +32,19 @@ let Dashboard = (props) => {
         let ordersResponseBody = await ordersResponse.json();
 
         //get all data from products
-        let productsResponse = await fetch("http://localhost:5000/products", {
-          method: "GET",
+        let productsResponse = await ProductsService.fetchProducts();
+        let productsResponseBody = await productsResponse.json();
+
+        //read all orders data
+        ordersResponseBody.forEach((order) => {
+          order.product = ProductsService.getProductByProductId(
+            productsResponseBody,
+            order.productId
+          );
         });
-        if (productsResponse.ok) {
-          let productsResponseBody = await productsResponse.json();
 
-          //read all orders data
-          ordersResponseBody.forEach((order) => {
-            order.product = productsResponseBody.find(
-              (prod) => prod.id === order.productId
-            );
-          });
-
-          // console.log(ordersResponseBody);
-          setOrders(ordersResponseBody);
-        }
+        // console.log(ordersResponseBody);
+        setOrders(ordersResponseBody);
       }
     })();
   }, [userContext.user.currentUserId]);
@@ -66,16 +63,16 @@ let Dashboard = (props) => {
             <h4 className="py-4 my-2 text-info border-bottom">
               <i className="fa fa-history"></i>Previous Orders{" "}
               <span className="badge badge-info">
-                {getPreviousOrderds(orders).length}
+                {OrdersService.getPreviousOrderds(orders).length}
               </span>
             </h4>
-            {getPreviousOrderds(orders).length === 0 ? (
+            {OrdersService.getPreviousOrderds(orders).length === 0 ? (
               <div className="text-danger">No Orderds</div>
             ) : (
               ""
             )}
 
-            {getPreviousOrderds(orders).map((ord) => {
+            {OrdersService.getPreviousOrderds(orders).map((ord) => {
               return (
                 <Order
                   key={ord.id}
@@ -97,16 +94,16 @@ let Dashboard = (props) => {
             <h4 className="py-4 my-2 text-primary border-bottom">
               <i className="fa fa-shopping-cart"></i>Cart{" "}
               <span className="badge badge-primary">
-                {getCart(orders).length}
+                {OrdersService.getCart(orders).length}
               </span>
             </h4>
 
-            {getCart(orders).length === 0 ? (
+            {OrdersService.getCart(orders).length === 0 ? (
               <div className="text-danger">No products in your cart</div>
             ) : (
               ""
             )}
-            {getCart(orders).map((ord) => {
+            {OrdersService.getCart(orders).map((ord) => {
               return (
                 <Order
                   key={ord.id}
