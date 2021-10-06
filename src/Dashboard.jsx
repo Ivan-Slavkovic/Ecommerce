@@ -5,6 +5,8 @@ import { OrdersService, ProductsService } from "./Service";
 
 let Dashboard = (props) => {
   let [orders, setOrders] = useState([]);
+  let [showOrderDeletedAlert, setShowOrderDeletedAlert] = useState(false);
+  let [showOrderPlaceedAlert, setShowOrderPlacedAlert] = useState(false);
   //get context
   let userContext = useContext(UserContext);
 
@@ -47,32 +49,56 @@ let Dashboard = (props) => {
     loadDataFromDatabase();
   }, [userContext.user.currentUserId, loadDataFromDatabase]);
   //When the user click on Buy Now
-  let onBuyNowClick = async (orderId, userId, productId, quantity) => {
-    if (window.confirm("Do you want to place order for this product?")) {
-      let updateOrder = {
-        id: orderId,
-        productId: productId,
-        userId: userId,
-        quantity: quantity,
-        isPaymentCompleted: true,
-      };
-      let orderResponse = await fetch(
-        `http://localhost:5000/orders/${orderId}`,
-        {
-          method: "PUT",
-          body: JSON.stringify(updateOrder),
-          headers: {
-            "Content-type": "application/json",
-          },
+  let onBuyNowClick = useCallback(
+    async (orderId, userId, productId, quantity) => {
+      if (window.confirm("Do you want to place order for this product?")) {
+        let updateOrder = {
+          id: orderId,
+          productId: productId,
+          userId: userId,
+          quantity: quantity,
+          isPaymentCompleted: true,
+        };
+        let orderResponse = await fetch(
+          `http://localhost:5000/orders/${orderId}`,
+          {
+            method: "PUT",
+            body: JSON.stringify(updateOrder),
+            headers: {
+              "Content-type": "application/json",
+            },
+          }
+        );
+        let orderResponseBody = await orderResponse.json();
+        if (orderResponse.ok) {
+          console.log(orderResponseBody);
+          loadDataFromDatabase();
+          setShowOrderPlacedAlert(true);
         }
-      );
-      let orderResponseBody = await orderResponse.json();
-      if (orderResponse.ok) {
-        console.log(orderResponseBody);
-        loadDataFromDatabase();
       }
-    }
-  };
+    },
+    [loadDataFromDatabase]
+  );
+
+  //When the user clicks on Delete button
+  let onDeleteClick = useCallback(
+    async (orderId) => {
+      if (window.confirm("Do you want to place order for this product?")) {
+        let orderResponse = await fetch(
+          `http://localhost:5000/orders/${orderId}`,
+          { method: "DELETE" }
+        );
+        if (orderResponse.ok) {
+          let orderResponseBody = await orderResponse.json();
+          console.log(orderResponseBody);
+          loadDataFromDatabase();
+          setShowOrderDeletedAlert(true);
+        }
+      }
+    },
+    [loadDataFromDatabase]
+  );
+
   return (
     <div className="row">
       <div className="col-12 py-3 header">
@@ -114,6 +140,7 @@ let Dashboard = (props) => {
                   productName={ord.product.productName}
                   price={ord.product.price}
                   onBuyNowClick={onBuyNowClick}
+                  onDeleteClick={onDeleteClick}
                 />
               );
             })}
@@ -128,6 +155,38 @@ let Dashboard = (props) => {
                 {OrdersService.getCart(orders).length}
               </span>
             </h4>
+
+            {showOrderPlaceedAlert ? (
+              <div className="col-12">
+                <div
+                  className="alert alert-success alert-dismissible fade show mt-1"
+                  role="alert"
+                >
+                  Your order has been placed
+                  <button className="close" type="button" data-dismiss="alert">
+                    <span>&times</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
+
+            {showOrderDeletedAlert ? (
+              <div className="col-12">
+                <div
+                  className="alert alert-danger alert-dismissible fade show mt-1"
+                  role="alert"
+                >
+                  Your item has been removed from the cart
+                  <button className="close" type="button" data-dismiss="alert">
+                    <span>&times</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
 
             {OrdersService.getCart(orders).length === 0 ? (
               <div className="text-danger">No products in your cart</div>
@@ -146,6 +205,7 @@ let Dashboard = (props) => {
                   productName={ord.product.productName}
                   price={ord.product.price}
                   onBuyNowClick={onBuyNowClick}
+                  onDeleteClick={onDeleteClick}
                 />
               );
             })}
