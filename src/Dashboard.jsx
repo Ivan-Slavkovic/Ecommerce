@@ -46,7 +46,33 @@ let Dashboard = (props) => {
 
     loadDataFromDatabase();
   }, [userContext.user.currentUserId, loadDataFromDatabase]);
-
+  //When the user click on Buy Now
+  let onBuyNowClick = async (orderId, userId, productId, quantity) => {
+    if (window.confirm("Do you want to place order for this product?")) {
+      let updateOrder = {
+        id: orderId,
+        productId: productId,
+        userId: userId,
+        quantity: quantity,
+        isPaymentCompleted: true,
+      };
+      let orderResponse = await fetch(
+        `http://localhost:5000/orders/${orderId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify(updateOrder),
+          headers: {
+            "Content-type": "application/json",
+          },
+        }
+      );
+      let orderResponseBody = await orderResponse.json();
+      if (orderResponse.ok) {
+        console.log(orderResponseBody);
+        loadDataFromDatabase();
+      }
+    }
+  };
   return (
     <div className="row">
       <div className="col-12 py-3 header">
@@ -87,6 +113,7 @@ let Dashboard = (props) => {
                   quantity={ord.quantity}
                   productName={ord.product.productName}
                   price={ord.product.price}
+                  onBuyNowClick={onBuyNowClick}
                 />
               );
             })}
@@ -118,6 +145,7 @@ let Dashboard = (props) => {
                   quantity={ord.quantity}
                   productName={ord.product.productName}
                   price={ord.product.price}
+                  onBuyNowClick={onBuyNowClick}
                 />
               );
             })}
