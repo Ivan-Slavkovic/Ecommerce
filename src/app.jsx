@@ -8,12 +8,14 @@ import { Route, Switch } from "react-router";
 import NavBar from "./NavBar";
 import { UserContext } from "./UserContext";
 import Store from "./Store";
+import ProductsList from "./ProductsList";
 
 function App() {
   let [user, setUser] = useState({
     isLoggedIn: false,
     currentUserId: null,
     currentUserName: null,
+    currentUserRole: null,
   });
 
   return (
@@ -25,6 +27,8 @@ function App() {
             <Route path="/" exact={true} component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/dashboard" component={Dashboard} />
+            <Route path="/products" component={ProductsList} />
+
             <Route path="/store" component={Store} />
             <Route path="*" component={NoMatchPage} />
           </Switch>

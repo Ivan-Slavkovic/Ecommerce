@@ -6,6 +6,7 @@ let NavBar = () => {
   //get context
   let userContext = useContext(UserContext);
 
+  //when user clicks on Logout button
   let onLogoutClick = (event) => {
     event.preventDefault();
 
@@ -13,6 +14,7 @@ let NavBar = () => {
       isLoggedIn: false,
       currentUserId: null,
       currentUserName: null,
+      currentUserRole: null,
     });
 
     window.location.hash = "/";
@@ -37,7 +39,8 @@ let NavBar = () => {
 
       <div className="collapse navbar-collapse" id="navbarSupportedContent">
         <ul className="navbar-nav mr-auto">
-          {userContext.user.isLoggedIn ? (
+          {userContext.user.isLoggedIn &&
+          userContext.user.currentUserRole === "user" ? (
             <li className="nav-item">
               <NavLink
                 className="nav-link"
@@ -51,7 +54,8 @@ let NavBar = () => {
             ""
           )}
 
-          {userContext.user.isLoggedIn ? (
+          {userContext.user.isLoggedIn &&
+          userContext.user.currentUserRole === "user" ? (
             <li className="nav-item">
               <NavLink
                 className="nav-link"
@@ -59,6 +63,21 @@ let NavBar = () => {
                 activeClassName="active"
               >
                 <i className="fa fa-shopping-bag"></i> Store
+              </NavLink>
+            </li>
+          ) : (
+            ""
+          )}
+
+          {userContext.user.isLoggedIn &&
+          userContext.user.currentUserRole === "admin" ? (
+            <li className="nav-item">
+              <NavLink
+                className="nav-link"
+                to="/products"
+                activeClassName="active"
+              >
+                <i className="fa fa-suitcase"></i> Products
               </NavLink>
             </li>
           ) : (

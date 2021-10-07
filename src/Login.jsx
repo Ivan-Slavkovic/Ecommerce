@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { UserContext } from "./UserContext";
 let Login = (props) => {
-  var [email, setEmail] = useState("scott@test.com");
-  var [password, setPassword] = useState("Scott123");
+  var [email, setEmail] = useState("admin@test.com");
+  var [password, setPassword] = useState("Admin123");
   let userContext = useContext(UserContext);
 
   let [dirty, setDirty] = useState({
@@ -109,10 +109,17 @@ let Login = (props) => {
             isLoggedIn: true,
             currentUserName: responseBody[0].fullName,
             currentUserId: responseBody[0].id,
+            currentUserRole: responseBody[0].role,
           });
 
-          //redirect to dashboard
-          props.history.replace("/dashboard");
+          //redirect to relevant page based on role of the user received in the response
+          if (responseBody[0].role === "user") {
+            //redirect to dashboard
+            props.history.replace("/dashboard");
+          } else {
+            //redirect to products
+            props.history.replace("/products");
+          }
         } else {
           setLoginMessage(
             <span className="text-danger">Invalid Login, please try again</span>
