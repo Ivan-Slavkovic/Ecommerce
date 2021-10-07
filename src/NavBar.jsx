@@ -49,6 +49,20 @@ let NavBar = () => {
             ""
           )}
 
+          {userContext.user.isLoggedIn ? (
+            <li className="nav-item">
+              <NavLink
+                className="nav-link"
+                to="/store"
+                activeClassName="active"
+              >
+                <i className="fa fa-shopping-bag"></i> Store
+              </NavLink>
+            </li>
+          ) : (
+            ""
+          )}
+
           {!userContext.user.isLoggedIn ? (
             <li>
               <NavLink
