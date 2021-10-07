@@ -15,11 +15,12 @@ function App() {
     currentUserId: null,
     currentUserName: null,
   });
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       <HashRouter>
+        <NavBar />
         <div className="container-fluid">
-          <NavBar />
           <Switch>
             <Route path="/" exact={true} component={Login} />
             <Route path="/register" component={Register} />
@@ -34,5 +35,3 @@ function App() {
 }
 
 export default App;
-
-// You need to watch 21

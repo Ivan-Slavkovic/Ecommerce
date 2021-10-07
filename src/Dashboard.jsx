@@ -119,16 +119,16 @@ let Dashboard = (props) => {
             <h4 className="py-4 my-2 text-info border-bottom">
               <i className="fa fa-history"></i>Previous Orders{" "}
               <span className="badge badge-info">
-                {OrdersService.getPreviousOrderds(orders).length}
+                {OrdersService.getPreviousOrders(orders).length}
               </span>
             </h4>
-            {OrdersService.getPreviousOrderds(orders).length === 0 ? (
-              <div className="text-danger">No Orderds</div>
+            {OrdersService.getPreviousOrders(orders).length === 0 ? (
+              <div className="text-danger">No Orders</div>
             ) : (
               ""
             )}
 
-            {OrdersService.getPreviousOrderds(orders).map((ord) => {
+            {OrdersService.getPreviousOrders(orders).map((ord) => {
               return (
                 <Order
                   key={ord.id}

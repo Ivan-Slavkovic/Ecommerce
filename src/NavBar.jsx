@@ -8,11 +8,13 @@ let NavBar = () => {
 
   let onLogoutClick = (event) => {
     event.preventDefault();
+
     userContext.setUser({
       isLoggedIn: false,
       currentUserId: null,
       currentUserName: null,
     });
+
     window.location.hash = "/";
   };
 
@@ -107,7 +109,7 @@ let NavBar = () => {
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  <i className="fa fa-user-circle"></i>
+                  <i className="fa fa-user-circle"></i>{" "}
                   {userContext.user.currentUserName}
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -125,6 +127,7 @@ let NavBar = () => {
         ) : (
           ""
         )}
+
         {/* right box ends */}
       </div>
     </nav>
