@@ -1,4 +1,3 @@
-import react from "react";
 import React, { useState, useEffect, useMemo } from "react";
 import { CategoriesService, BrandsService, SortService } from "./Service";
 
@@ -49,7 +48,7 @@ function ProductsList(props) {
   }, [search]);
 
   let filteredProducts = useMemo(() => {
-    console.log("filtered products", originalProducts, selectedBrand);
+    // console.log("filtered products", originalProducts, selectedBrand);
     return originalProducts.filter(
       (prod) => prod.brand.brandName.indexOf(selectedBrand) >= 0
     );

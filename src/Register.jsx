@@ -158,12 +158,15 @@ let Register = (props) => {
 
       if (response.ok) {
         let responseBody = await response.json();
-        userContext.setUser({
-          ...userContext.user,
-          isLoggedIn: true,
-          currentUserName: responseBody.fullName,
-          currentUserId: responseBody.id,
-          currentUserRole: responseBody[0].role,
+
+        //dispatch calls reducer
+        userContext.dispatch({
+          type: "login",
+          payload: {
+            currentUserName: responseBody.fullName,
+            currentUserId: responseBody.id,
+            currentUserRole: responseBody[0].role,
+          },
         });
 
         setMessage(

@@ -104,12 +104,18 @@ let Login = (props) => {
         let responseBody = await response.json();
         //set global satate using context
         if (responseBody.length > 0) {
-          userContext.setUser({
-            ...userContext.user,
-            isLoggedIn: true,
-            currentUserName: responseBody[0].fullName,
-            currentUserId: responseBody[0].id,
-            currentUserRole: responseBody[0].role,
+          userContext.dispatch({
+            type: "something",
+            payload: { x: 10, y: 20 },
+          });
+
+          userContext.dispatch({
+            type: "login",
+            payload: {
+              currentUserName: responseBody[0].fullName,
+              currentUserId: responseBody[0].id,
+              currentUserRole: responseBody[0].role,
+            },
           });
 
           //redirect to relevant page based on role of the user received in the response
