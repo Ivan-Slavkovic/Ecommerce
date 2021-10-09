@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { UserContext } from "./UserContext";
 let Login = (props) => {
   var [email, setEmail] = useState("admin@test.com");
   var [password, setPassword] = useState("Admin123");
   let userContext = useContext(UserContext);
+  let myEmailRef = useRef();
 
   let [dirty, setDirty] = useState({
     email: false,
@@ -35,6 +36,7 @@ let Login = (props) => {
   //executes only once -on initial render = componentDidMount
   useEffect(() => {
     document.title = "Login - eCommerce";
+    myEmailRef.current.focus();
   }, []);
 
   //exectures only once -on component unmounting phase = componentWillUnmount
@@ -178,6 +180,7 @@ let Login = (props) => {
                   setDirty({ ...dirty, email: true });
                   validate();
                 }}
+                ref={myEmailRef}
               ></input>
               <div className="text-danger">
                 {dirty["email"] && errors["email"][0] ? errors["email"] : ""}

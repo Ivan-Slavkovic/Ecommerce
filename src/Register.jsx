@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { UserContext } from "./UserContext";
 
 let Register = (props) => {
@@ -46,6 +46,7 @@ let Register = (props) => {
   let userContext = useContext(UserContext);
 
   let [message, setMessage] = useState("");
+  let myEmailRef = useRef();
 
   //validate
   let validate = () => {
@@ -126,6 +127,7 @@ let Register = (props) => {
   //executes only once - on initial render =  componentDidMount
   useEffect(() => {
     document.title = "Register - eCommerce";
+    myEmailRef.current.focus();
   }, []);
 
   let onRegisterClick = async () => {
@@ -244,6 +246,7 @@ let Register = (props) => {
                     setDirty({ ...dirty, [event.target.name]: true });
                     validate();
                   }}
+                  ref={myEmailRef}
                 />
 
                 <div className="text-danger">
